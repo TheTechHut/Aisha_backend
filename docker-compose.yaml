@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:latest
+    container_name: waiting-list-postgres
+    environment:
+      POSTGRES_USER: api_user
+      POSTGRES_PASSWORD: Excalibar598
+      POSTGRES_DB: waiting_list_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  backend-network:
+    driver: bridge
