@@ -1,5 +1,8 @@
-version: '3.8'
+
 services:
+  app:
+    context: .
+
   postgres:
     image: postgres:latest
     container_name: waiting-list-postgres
