@@ -1,7 +1,19 @@
 
 services:
   app:
-    context: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: waiting-list-app
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://api_user:Excalibar598@postgres:5432/waiting_list_db
+    depends_on:
+      - postgres
+    networks:
+      - backend-network
+    restart: unless-stopped
 
   postgres:
     image: postgres:latest
