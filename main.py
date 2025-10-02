@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Depends, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from database import SessionLocal, Base, engine, get_db
 from models import WaitingList
@@ -13,6 +14,16 @@ class WaitingListCreate(BaseModel):
 
 
 app = FastAPI(title="Waiting List API")
+
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.post("/waiting-list/", response_model=dict)
 def create_waiting_list_item(item: WaitingListCreate, db=Depends(get_db)):
