@@ -17,10 +17,10 @@ class WaitingListCreate(BaseModel):
     @field_validator('phone_number')
     @classmethod
     def validate_phone(cls, v):
-        # Matches formats like: +254-XXX-XXX-XXXX or 254XXXXXXXXXX
-        pattern = r'^\+?234[-]?\d{3}[-]?\d{3}[-]?\d{4}$'
+        # Matches formats like: +254-XXX-XXX-XXX
+        pattern = r'^\+?234[-]?\d{3}[-]?\d{3}[-]?\d{3}$'
         if not re.match(pattern, v):
-            raise ValueError('Invalid Kenyan phone number format. Use +254-XXX-XXX-XXXX or 254XXXXXXXXXX')
+            raise ValueError('Invalid Kenyan phone number format. Use +254-XXX-XXX-XXX')
         return v
 
     @field_validator('username')
