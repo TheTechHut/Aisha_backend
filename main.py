@@ -3,6 +3,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, field_validator
 import re
 
+
+
+
+
 from database import SessionLocal, Base, engine, get_db
 from models import WaitingList
 
@@ -59,3 +63,7 @@ async def create_waiting_list_item(item: WaitingListCreate, db=Depends(get_db)):
 @app.get("/")
 def read_root():
     return {"message": "Waiting List API is running"}
+    
+
+
+    
