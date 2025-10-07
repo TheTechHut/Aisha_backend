@@ -2,7 +2,16 @@ from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, field_validator
 import re
+import os
+import requests
+from dotenv import load_dotenv
 
+# Load environment variables
+load_dotenv()
+
+# Get Gemini API key
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
 
 
 
@@ -66,4 +75,24 @@ def read_root():
     
 
 
+
+
+
+
+@app.get("/gemini")
+def get_gemini_response(prompt: str):
+    headers = {
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "contents": [
+            {"parts": [{"text": prompt}]}
+        ]
+    }
+    response = requests.post(
+        f"{GEMINI_API_URL}?key={GEMINI_API_KEY}",
+        json=payload,
+        headers=headers
+    )
+    return response.json()
     
