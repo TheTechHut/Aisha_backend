@@ -3,8 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, field_validator
 import re
 import os
-import requests
+
 from dotenv import load_dotenv
+
 
 # Load environment variables
 load_dotenv()
@@ -95,4 +96,5 @@ def get_gemini_response(prompt: str):
         headers=headers
     )
     return response.json()
-    
+
+
