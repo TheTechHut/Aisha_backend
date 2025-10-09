@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, field_validator
 import re
 import os
-
+import requests
 from dotenv import load_dotenv
 
 
@@ -74,11 +74,6 @@ async def create_waiting_list_item(item: WaitingListCreate, db=Depends(get_db)):
 def read_root():
     return {"message": "Waiting List API is running"}
     
-
-
-
-
-
 
 @app.get("/gemini")
 def get_gemini_response(prompt: str):
