@@ -3,10 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, field_validator
 import re
 import os
-import requests
 from dotenv import load_dotenv
 from service.api_service import call_api
-
 
 # Load environment variables
 load_dotenv()
@@ -47,7 +45,6 @@ class WaitingListCreate(BaseModel):
             raise ValueError('Username must contain only letters, spaces, or hyphens (2-50 characters)')
         return v
 
-        
 
 app = FastAPI(title="Waiting List API")
 
@@ -76,6 +73,7 @@ async def create_waiting_list_item(item: WaitingListCreate, db=Depends(get_db)):
 def read_root():
     return {"message": "Waiting List API is running"}
     
+    
 @app.get("/gemini")
 async def get_gemini_response(prompt: str):
     payload = {
@@ -98,5 +96,4 @@ async def get_gemini_response(prompt: str):
     return result["data"]
 
     
-
 
