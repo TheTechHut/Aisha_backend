@@ -1,4 +1,5 @@
 import httpx
+import requests
 
 async def call_api(
     url: str,
