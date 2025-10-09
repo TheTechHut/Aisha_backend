@@ -5,6 +5,7 @@ import re
 import os
 import requests
 from dotenv import load_dotenv
+from service.api_service import call_api
 
 
 # Load environment variables
@@ -46,6 +47,9 @@ class WaitingListCreate(BaseModel):
             raise ValueError('Username must contain only letters, spaces, or hyphens (2-50 characters)')
         return v
 
+        
+class GeminiPrompt(BaseModel):
+    prompt: str
 
 app = FastAPI(title="Waiting List API")
 
@@ -74,22 +78,27 @@ async def create_waiting_list_item(item: WaitingListCreate, db=Depends(get_db)):
 def read_root():
     return {"message": "Waiting List API is running"}
     
-
-@app.get("/gemini")
-def get_gemini_response(prompt: str):
-    headers = {
-        "Content-Type": "application/json"
-    }
+@app.post("/gemini")
+async def get_gemini_response(request: GeminiPrompt):
     payload = {
         "contents": [
-            {"parts": [{"text": prompt}]}
+            {"parts": [{"text": request.prompt}]}
         ]
     }
-    response = requests.post(
-        f"{GEMINI_API_URL}?key={GEMINI_API_KEY}",
-        json=payload,
-        headers=headers
+    result = await call_api(
+        url=f"{GEMINI_API_URL}?key={GEMINI_API_KEY}",
+        method="POST",
+        headers={"Content-Type": "application/json"},
+        json=payload
     )
-    return response.json()
+    if not result["success"]:
+        raise HTTPException(status_code=500, detail=result.get("error", "Unknown error"))
+    # Extract only the message from the AI
+    try:
+        message = result["data"]["candidates"][0]["content"]["parts"][0]["text"]
+    except Exception:
+        raise HTTPException(status_code=500, detail="Invalid Gemini API response format")
+    return {"message": message}
+    
 
 
