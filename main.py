@@ -46,6 +46,10 @@ class WaitingListCreate(BaseModel):
         return v
 
 
+class GeminiRequest(BaseModel):
+    prompt: str
+
+
 app = FastAPI(title="Waiting List API")
 
 
@@ -69,13 +73,11 @@ async def create_waiting_list_item(item: WaitingListCreate, db=Depends(get_db)):
     except ValueError as e:
         raise HTTPException(status_code=422, detail=str(e))
 
-@app.get("/")
-def read_root():
-    return {"message": "Waiting List API is running"}
-    
-    
-@app.get("/gemini")
-async def get_gemini_response(prompt: str):
+
+
+@app.post("/gemini")
+async def get_gemini_response(request: GeminiRequest):
+    prompt = request.prompt
     payload = {
         "contents": [
             {"parts": [{"text": prompt}]}
@@ -90,10 +92,14 @@ async def get_gemini_response(prompt: str):
     )
 
     if not result["success"]:
-        raise HTTPException(status_code=500,detail=result.get("error", "Unknown error")
-        )
+        raise HTTPException(status_code=500, detail=result.get("error", "Unknown error"))
 
-    return result["data"]
+    data = result["data"]
+    text = data["candidates"][0]["content"]["parts"][0]["text"]
+    return {"response": text}
 
     
 
+@app.get("/")
+def read_root():
+    return {"message": "Waiting List API is running"}
